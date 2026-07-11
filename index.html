@@ -1,649 +1,525 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pierluigi Rizzu | AI Agent Architect</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pierluigi Rizzu - AI Agent Architect</title>
+<style>
+    :root {
+        --bg: #000000;
+        --text: #f5f5f7;
+        --accent: #14b8a6;
+        --gray: #86868b;
+        --card-bg: #1c1c1e;
+        --ease: cubic-bezier(.16,1,.3,1);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    /* HERO */
+    .hero {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 6rem 0 4rem;
+        opacity: 0;
+        animation: slideUp 1s var(--ease) forwards;
+    }
+
+    @keyframes slideUp {
+        0% {
+            opacity: 0;
+            transform: translateY(40px);
         }
-
-        :root {
-            --bg: #000;
-            --text: #f5f5f7;
-            --text-secondary: #86868b;
-            --accent: #14b8a6;
-            --surface: #1d1d1f;
-            --surface-hover: #2d2d2f;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* Hero - 50vh max */
-        .hero {
-            min-height: 50vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 60px 24px;
-            position: relative;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: var(--surface);
-            border-radius: 100px;
-            font-size: 14px;
-            color: var(--accent);
-            margin-bottom: 24px;
-            border: 1px solid var(--accent);
-        }
-
-        .hero-badge::before {
-            content: "◆";
-            font-size: 10px;
-        }
-
-        .hero h1 {
-            font-size: clamp(40px, 8vw, 72px);
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 12px;
-        }
-
-        .hero-title {
-            font-size: clamp(20px, 4vw, 28px);
-            color: var(--accent);
-            font-weight: 500;
-            margin-bottom: 32px;
-        }
-
-        .hero-handle {
-            color: var(--text-secondary);
-            font-size: 16px;
-            margin-bottom: 32px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 48px;
-        }
-
-        .btn {
-            padding: 14px 28px;
-            border-radius: 100px;
-            font-size: 15px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--bg);
-        }
-
-        .btn-primary:hover {
-            background: #0d9488;
-        }
-
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--surface-hover);
-        }
-
-        .btn-secondary:hover {
-            background: var(--surface-hover);
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 48px;
-            justify-content: center;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Sections */
-        section {
-            padding: 80px 0;
-        }
-
-        section:nth-child(even) {
-            background: var(--surface);
-        }
-
-        .section-header {
-            margin-bottom: 48px;
-        }
-
-        .section-header h2 {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .section-header p {
-            color: var(--text-secondary);
-            font-size: 18px;
-        }
-
-        /* About */
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-        }
-
-        .about-card {
-            padding: 32px;
-            background: var(--bg);
-            border-radius: 16px;
-            border: 1px solid var(--surface-hover);
-        }
-
-        .about-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--accent);
-        }
-
-        .about-card p {
-            color: var(--text-secondary);
-            font-size: 15px;
-            line-height: 1.7;
-        }
-
-        /* Work */
-        .work-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .work-card {
-            background: var(--bg);
-            border-radius: 20px;
-            padding: 32px;
-            border: 1px solid var(--surface-hover);
-            transition: all 0.2s ease;
-        }
-
-        .work-card:hover {
-            border-color: var(--accent);
-        }
-
-        .work-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--accent);
-            margin-bottom: 16px;
-        }
-
-        .work-status::before {
-            content: "";
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .work-card h3 {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .work-card p {
-            color: var(--text-secondary);
-            font-size: 15px;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .work-stack {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .work-stack span {
-            padding: 6px 12px;
-            background: var(--surface);
-            border-radius: 6px;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        /* Skills */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .skill-card {
-            padding: 28px;
-            background: var(--bg);
-            border-radius: 16px;
-            border: 1px solid var(--surface-hover);
-        }
-
-        .skill-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--surface);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-
-        .skill-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .skill-card p {
-            color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .skill-tags span {
-            padding: 4px 10px;
-            background: var(--surface);
-            border-radius: 4px;
-            font-size: 12px;
-            color: var(--accent);
-        }
-
-        /* Contact */
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-        }
-
-        .contact-card {
-            padding: 32px;
-            background: var(--surface);
-            border-radius: 16px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-
-        .contact-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-        }
-
-        .contact-icon {
-            width: 56px;
-            height: 56px;
-            background: var(--bg);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 24px;
-        }
-
-        .contact-card h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .contact-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        /* Footer */
-        footer {
-            padding: 40px 0;
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .hero {
-                min-height: auto;
-                padding: 48px 24px;
-            }
-
-            .hero-stats {
-                gap: 32px;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                width: 100%;
-                max-width: 280px;
-            }
-
-            .btn {
-                justify-content: center;
-            }
-
-            section {
-                padding: 60px 0;
-            }
-
-            .about-grid,
-            .work-grid,
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .contact-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-stats {
-                flex-direction: column;
-                gap: 24px;
-            }
-
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .about-card,
-            .work-card,
-            .skill-card,
-            .contact-card {
-                padding: 24px;
-            }
-        }
-
-        /* Scroll reveal */
-        .reveal {
+        100% {
             opacity: 1;
             transform: translateY(0);
         }
-    </style>
+    }
+
+    .hero h1 {
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: 1rem;
+    }
+
+    .hero h2 {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .hero p {
+        font-size: 1.25rem;
+        color: var(--gray);
+        max-width: 600px;
+        margin-bottom: 2.5rem;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .btn {
+        padding: 0.8rem 1.8rem;
+        border-radius: 980px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s var(--ease);
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background-color: var(--accent);
+        color: #000;
+    }
+
+    .btn-primary:hover {
+        background-color: #0d9488;
+        transform: scale(1.02);
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        color: var(--text);
+        border: 1px solid #333;
+    }
+
+    .btn-secondary:hover {
+        background-color: #1c1c1e;
+        border-color: var(--text);
+    }
+
+    .stats {
+        display: flex;
+        gap: 3rem;
+    }
+
+    .stat-item h3 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .stat-item p {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin: 0;
+    }
+
+    /* STICKY SECTIONS */
+    .sticky-section {
+        padding: 8rem 0;
+        border-top: 1px solid #1c1c1e;
+    }
+
+    .sticky-container {
+        display: flex;
+        gap: 4rem;
+    }
+
+    .sticky-left {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        flex: 0 0 35%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .sticky-left h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+    }
+
+    .sticky-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6rem;
+        padding: 10rem 0;
+    }
+
+    .content-block {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    }
+
+    .content-block.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .content-block h3 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--accent);
+    }
+
+    .content-block p {
+        font-size: 1.1rem;
+        color: var(--gray);
+    }
+
+    /* PROJECT CARDS */
+    .project-card {
+        background-color: var(--card-bg);
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid #2c2c2e;
+        transition: border-color 0.3s var(--ease);
+    }
+
+    .project-card:hover {
+        border-color: var(--accent);
+    }
+
+    .project-card h3 {
+        font-size: 2rem;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .project-card .tag {
+        display: inline-block;
+        font-size: 0.8rem;
+        color: var(--accent);
+        background: rgba(20, 184, 166, 0.1);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+    }
+
+    .project-card p {
+        color: var(--gray);
+    }
+
+    /* SKILLS */
+    .skills-section {
+        padding: 8rem 0;
+        border-top: 1px solid #1c1c1e;
+    }
+
+    .skills-header {
+        margin-bottom: 4rem;
+        max-width: 700px;
+    }
+
+    .skills-header h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: 1rem;
+    }
+
+    .skills-header p {
+        font-size: 1.2rem;
+        color: var(--gray);
+    }
+
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+
+    .skill-card {
+        background-color: var(--card-bg);
+        padding: 2rem;
+        border-radius: 16px;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+        border: 1px solid transparent;
+    }
+
+    .skill-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .skill-card:hover {
+        border-color: var(--accent);
+    }
+
+    .skill-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .skill-card p {
+        color: var(--gray);
+        font-size: 0.95rem;
+    }
+
+    /* CONTACT */
+    .contact-section {
+        padding: 8rem 0 12rem;
+        border-top: 1px solid #1c1c1e;
+        text-align: center;
+    }
+
+    .contact-section h2 {
+        font-size: clamp(3rem, 7vw, 5rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: 1.5rem;
+    }
+
+    .contact-section > .container > p {
+        font-size: 1.2rem;
+        color: var(--gray);
+        margin-bottom: 3rem;
+    }
+
+    .contact-links {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .contact-link {
+        color: var(--text);
+        text-decoration: none;
+        padding: 1rem 2rem;
+        border: 1px solid #333;
+        border-radius: 980px;
+        transition: all 0.3s var(--ease);
+        font-weight: 500;
+    }
+
+    .contact-link:hover {
+        background-color: var(--accent);
+        color: #000;
+        border-color: var(--accent);
+    }
+
+    @media (max-width: 768px) {
+        .sticky-container {
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .sticky-left {
+            position: static;
+            height: auto;
+            flex: 1 1 100%;
+        }
+        .sticky-right {
+            padding: 0;
+            gap: 3rem;
+        }
+        .skills-grid {
+            grid-template-columns: 1fr;
+        }
+        .stats {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+    }
+</style>
 </head>
 <body>
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-badge">Hermes Agent</div>
-            <h1>Pierluigi Rizzu</h1>
-            <p class="hero-title">AI Agent Architect</p>
-            <p class="hero-handle">@RizzuAI</p>
-            <div class="hero-buttons">
-                <a href="mailto:pierluigirizzu@agentmail.to" class="btn btn-primary">Contattami</a>
-                <a href="https://github.com/RizzuAI" target="_blank" class="btn btn-secondary">GitHub</a>
+
+    <!-- HERO -->
+    <header class="hero container">
+        <h1>Pierluigi Rizzu</h1>
+        <h2>AI Agent Architect</h2>
+        <p>Architetto sistemi multi-agente con memoria persistente, tool calling e LLM in produzione. Non prompt engineering: orchestrazione.</p>
+        <div class="btn-group">
+            <a href="#work" class="btn btn-primary">Vedi Progetti</a>
+            <a href="#contact" class="btn btn-secondary">Contattami</a>
+        </div>
+        <div class="stats">
+            <div class="stat-item">
+                <h3>50+</h3>
+                <p>Agenti Distribuiti</p>
             </div>
-            <div class="hero-stats">
-                <div class="stat">
-                    <div class="stat-value">50+</div>
-                    <div class="stat-label">Agent Deployed</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">12</div>
-                    <div class="stat-label">Anni Esperienza</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">99.9%</div>
-                    <div class="stat-label">Uptime</div>
-                </div>
+            <div class="stat-item">
+                <h3>99.9%</h3>
+                <p>Uptime Sistema</p>
+            </div>
+            <div class="stat-item">
+                <h3>10M+</h3>
+                <p>Task Elaborati</p>
             </div>
         </div>
-    </section>
+    </header>
 
-    <!-- About -->
-    <section id="about">
-        <div class="container">
-            <div class="section-header">
-                <h2>About Me</h2>
-                <p>Come costruisco sistemi AI autonomi</p>
+    <!-- ABOUT -->
+    <section id="about" class="sticky-section">
+        <div class="container sticky-container">
+            <div class="sticky-left">
+                <h2>Chi sono</h2>
             </div>
-            <div class="about-grid">
-                <div class="about-card">
+            <div class="sticky-right">
+                <div class="content-block">
                     <h3>Approccio</h3>
-                    <p>Progetto agenti come sistemi distribuiti: ogni componente ha responsabilità definite, stati tracciabili e capacità di recovery automatica. Niente black box, tutto osservabile e debuggabile.</p>
+                    <p>Un agente non è un modello. È il sistema che lo circonda. Architettura prima del prompt.</p>
                 </div>
-                <div class="about-card">
+                <div class="content-block">
                     <h3>Stack</h3>
-                    <p>Python per core logic, Rust per componenti critiche di performance, Go per orchestrazione distribuita. LLM via API e self-hosted. Vector DB per memoria semantica, Redis per stato temporaneo.</p>
+                    <p>Python, TypeScript, LangGraph, pgvector, K8s. Multi-agente, eval pipeline, guardrail deterministici.</p>
                 </div>
-                <div class="about-card">
+                <div class="content-block">
                     <h3>Filosofia</h3>
-                    <p>Gli agenti devono essere prevedibili prima che intelligenti. Parto da guardrails rigidi, poi allento dove i dati lo giustificano. La sicurezza è feature, non afterthought.</p>
+                    <p>Prompt è il 5%. Il resto è architettura: recupero contesto, delega, verifica output, recovery errori.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Work -->
-    <section id="work">
-        <div class="container">
-            <div class="section-header">
-                <h2>Work</h2>
-                <p>Sistemi in produzione</p>
+    <!-- WORK -->
+    <section id="work" class="sticky-section">
+        <div class="container sticky-container">
+            <div class="sticky-left">
+                <h2>Progetti</h2>
             </div>
-            <div class="work-grid">
-                <div class="work-card">
-                    <div class="work-status">Live in Production</div>
+            <div class="sticky-right">
+                <div class="content-block project-card">
+                    <span class="tag">Autonomia</span>
                     <h3>Hermes Scout</h3>
-                    <p>Agente di ricerca autonomo che naviga codebase enterprise, identifica dipendenze obsolete e genera PR di refactoring. Gestisce 500+ repo in parallelo.</p>
-                    <div class="work-stack">
-                        <span>Python</span>
-                        <span>Tree-sitter</span>
-                        <span>GitHub API</span>
-                        <span>Celery</span>
-                    </div>
+                    <p>Sistema multi-agente per ricerca mercato autonoma. 4 agenti specializzati orchestrati con supervisor.</p>
                 </div>
-                <div class="work-card">
-                    <div class="work-status">Live in Production</div>
+                <div class="content-block project-card">
+                    <span class="tag">Persistenza</span>
                     <h3>Atlas Memory</h3>
-                    <p>Sistema RAG multi-tenant con memoria a lungo termine. Conversazioni persistenti, embedding adaptive, retrieval ibrido sparse-dense. Latenza P95 &lt; 200ms.</p>
-                    <div class="work-stack">
-                        <span>Rust</span>
-                        <span>Qdrant</span>
-                        <span>ONNX</span>
-                        <span>Kafka</span>
-                    </div>
+                    <p>Layer memoria persistente per agenti long-running. Episodica, semantica, procedurale. Recupero ibrido keyword+vettoriale.</p>
                 </div>
-                <div class="work-card">
-                    <div class="work-status">Live in Production</div>
-                    <h3>Sentinel Policy Engine</h3>
-                    <p>Guardrails runtime per LLM: classificazione input/output, PII detection, rate limiting semantico, audit trail immutabile. Blocca 2M+ richieste/anomala al giorno.</p>
-                    <div class="work-stack">
-                        <span>Go</span>
-                        <span>OPA</span>
-                        <span>Prometheus</span>
-                        <span>ClickHouse</span>
-                    </div>
+                <div class="content-block project-card">
+                    <span class="tag">Sicurezza</span>
+                    <h3>Sentinel</h3>
+                    <p>Policy engine dichiarativo per validare output agenti prima dell'esecuzione. Regole YAML, pipeline, approvazione umana.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Skills -->
-    <section id="skills">
+    <!-- SKILLS -->
+    <section id="skills" class="skills-section">
         <div class="container">
-            <div class="section-header">
-                <h2>Skills</h2>
-                <p>Competenze tecniche</p>
+            <div class="skills-header">
+                <h2>Competenze</h2>
+                <p>Lo stack che uso ogni giorno, non quello sul CV.</p>
             </div>
             <div class="skills-grid">
                 <div class="skill-card">
-                    <div class="skill-icon">⚡</div>
-                    <h3>Orchestrazione</h3>
-                    <p>Design di flussi multi-agent con gestione stato, retry policy, circuit breakers e osservabilità end-to-end.</p>
-                    <div class="skill-tags">
-                        <span>Temporal</span>
-                        <span>Prefect</span>
-                        <span>Celery</span>
-                    </div>
+                    <h3>Architettura LLM</h3>
+                    <p>Progettazione di pipeline avanzate per l'integrazione di modelli linguistici di grandi dimensioni.</p>
                 </div>
                 <div class="skill-card">
-                    <div class="skill-icon">🔧</div>
-                    <h3>Tool Calling</h3>
-                    <p>Function calling affidabile: schema validation, execution sandboxing, result caching e error recovery strutturato.</p>
-                    <div class="skill-tags">
-                        <span>OpenAI</span>
-                        <span>Anthropic</span>
-                        <span>MCP</span>
-                    </div>
+                    <h3>Orchestrazione Agenti</h3>
+                    <p>Sviluppo di sistemi multi-agente capaci di collaborare e risolvere task complessi in autonomia.</p>
                 </div>
                 <div class="skill-card">
-                    <div class="skill-icon">🧠</div>
-                    <h3>Memoria & RAG</h3>
-                    <p>Architetture di retrieval: embedding models, reranking, query expansion, memoria conversazionale e knowledge graphs.</p>
-                    <div class="skill-tags">
-                        <span>Qdrant</span>
-                        <span>Neo4j</span>
-                        <span>pgvector</span>
-                    </div>
+                    <h3>Vector Databases</h3>
+                    <p>Gestione della memoria a lungo termine tramite embeddings e database vettoriali ottimizzati.</p>
                 </div>
                 <div class="skill-card">
-                    <div class="skill-icon">🛡️</div>
-                    <h3>Guardrails</h3>
-                    <p>Sicurezza LLM: input validation, output filtering, prompt injection detection, bias mitigation e compliance automation.</p>
-                    <div class="skill-tags">
-                        <span>Lakera</span>
-                        <span>NeMo</span>
-                        <span>LLM Guard</span>
-                    </div>
+                    <h3>API & Integrazioni</h3>
+                    <p>Collegamento fluido tra agenti AI e servizi esterni tramite architetture REST e GraphQL.</p>
                 </div>
                 <div class="skill-card">
-                    <div class="skill-icon">☁️</div>
-                    <h3>Infrastruttura</h3>
-                    <p>Deploy di agenti su K8s: auto-scaling, cost optimization, multi-region failover e disaster recovery.</p>
-                    <div class="skill-tags">
-                        <span>Kubernetes</span>
-                        <span>Terraform</span>
-                        <span>AWS/GCP</span>
-                    </div>
+                    <h3>Prompt Engineering</h3>
+                    <p>Ottimizzazione delle interazioni con i modelli per garantire risposte precise e contestualizzate.</p>
                 </div>
                 <div class="skill-card">
-                    <div class="skill-icon">💻</div>
-                    <h3>Linguaggi</h3>
-                    <p>Polyglot pragmatico: scelgo il linguaggio in base ai vincoli di performance, safety e velocity del team.</p>
-                    <div class="skill-tags">
-                        <span>Python</span>
-                        <span>Rust</span>
-                        <span>Go</span>
-                    </div>
+                    <h3>Cloud & DevOps</h3>
+                    <p>Deploy scalabile e monitoraggio continuo di infrastrutture AI su ambienti cloud nativi.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact">
+    <!-- CONTACT -->
+    <section id="contact" class="contact-section">
         <div class="container">
-            <div class="section-header">
-                <h2>Contact</h2>
-                <p>Collaboriamo</p>
-            </div>
-            <div class="contact-grid">
-                <a href="mailto:pierluigirizzu@agentmail.to" class="contact-card">
-                    <div class="contact-icon">✉️</div>
-                    <h3>Email</h3>
-                    <p>pierluigirizzu@agentmail.to</p>
-                </a>
-                <a href="https://github.com/RizzuAI" target="_blank" class="contact-card">
-                    <div class="contact-icon">⚙️</div>
-                    <h3>GitHub</h3>
-                    <p>github.com/RizzuAI</p>
-                </a>
-                <a href="https://x.com/RizzuAI" target="_blank" class="contact-card">
-                    <div class="contact-icon">𝕏</div>
-                    <h3>X / Twitter</h3>
-                    <p>@RizzuAI</p>
-                </a>
-                <a href="https://linkedin.com/in/pierluigirizzu" target="_blank" class="contact-card">
-                    <div class="contact-icon">💼</div>
-                    <h3>LinkedIn</h3>
-                    <p>Pierluigi Rizzu</p>
-                </a>
+            <h2>Contatti</h2>
+            <p>Parliamo di agenti che funzionano davvero.</p>
+            <div class="contact-links">
+                <a href="mailto:pierluigi@example.com" class="contact-link">Email</a>
+                <a href="https://github.com/RizzuAI" target="_blank" class="contact-link">GitHub</a>
+                <a href="https://x.com/RizzuAI" target="_blank" class="contact-link">X (Twitter)</a>
+                <a href="https://linkedin.com/in/RizzuAI" target="_blank" class="contact-link">LinkedIn</a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>© 2024 Pierluigi Rizzu. Built with precision.</p>
-        </div>
-    </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observer for sticky content blocks
+        document.querySelectorAll('.content-block').forEach(block => {
+            observer.observe(block);
+        });
+
+        // Observer for skills with stagger effect
+        const skillCards = document.querySelectorAll('.skill-card');
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Calculate delay based on index within the current visible group
+                    const visibleIndex = Array.from(skillCards).indexOf(entry.target);
+                    const delay = (visibleIndex % 3) * 100; // Stagger by 100ms
+                    entry.target.style.transitionDelay = `${delay}ms`;
+                    entry.target.classList.add('visible');
+                    skillObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        skillCards.forEach(card => {
+            skillObserver.observe(card);
+        });
+    });
+</script>
+
 </body>
 </html>
-```
