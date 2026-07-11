@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GLM-5.2 — 744B MoE, open source</title>
+<style>
+:root {
+  --bg: #0b0d11;
+  --bg-2: #101318;
+  --border: #1d2128;
+  --text: #e4e8ed;
+  --muted: #868f9b;
+  --accent: #14b8a6;
+  --accent-bg: rgba(20,184,166,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1024px; margin: 0 auto; padding: 0 24px; }
+section { padding: 100px 0; }
+
+/* Nav */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(11,13,17,.8);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+nav .wrap { display: flex; align-items: center; height: 56px; }
+nav a { text-decoration: none; color: var(--muted); font-size: 14px; transition: color .2s; }
+nav a:hover { color: var(--text); }
+.nav-l { display: flex; gap: 28px; margin-left: 32px; }
+.nav-r { margin-left: auto; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 8px; font-size: 14px;
+  font-weight: 500; text-decoration: none; transition: all .15s;
+  cursor: pointer;
+}
+.btn-p { background: var(--accent); color: #0b0d11; border: none; }
+.btn-p:hover { opacity: .85; }
+.btn-g { border: 1px solid var(--border); color: var(--text); }
+.btn-g:hover { border-color: var(--muted); }
+
+/* Hero */
+.hero { padding: 160px 0 100px; }
+.hero h1 {
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 650;
+  letter-spacing: -.03em;
+  line-height: 1.05;
+  max-width: 800px;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+.hero p {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 560px;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+.hero-metrics {
+  display: flex;
+  gap: 40px;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+.metric .value {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.metric .label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Section headings */
+.s-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.s-title {
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 650;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.s-sub {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 580px;
+  line-height: 1.55;
+}
+
+/* Architecture cards */
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 40px;
+}
+.arch-item {
+  background: var(--bg-2);
+  padding: 28px;
+}
+.arch-item .tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  font-family: ui-monospace, 'SF Mono', monospace;
+  background: var(--accent-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.arch-item h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.arch-item p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* Features */
+.feat-list {
+  display: grid;
+  gap: 0;
+  margin-top: 40px;
+}
+.feat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.feat-cell {
+  background: var(--bg-2);
+  padding: 24px;
+}
+.feat-cell h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.feat-cell p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Colibrì */
+.colibri-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 32px;
+  align-items: center;
+}
+.colibri-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.colibri-info p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.term {
+  background: #080a0e;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: ui-monospace, 'SF Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow: hidden;
+}
+.term-h {
+  display: flex; gap: 6px; align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+.term-h .d { width: 10px; height: 10px; border-radius: 50%; background: #1d2128; }
+.term-b { padding: 16px 14px; color: var(--muted); }
+.term-b .ok { color: var(--accent); }
+.term-b .pr { color: var(--text); }
+.term-b .i { color: #636d79; }
+
+/* Benchmark grid */
+.bench-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 32px;
+}
+.bench-item {
+  background: var(--bg-2);
+  padding: 28px;
+}
+.bench-item .name {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: ui-monospace, 'SF Mono', monospace;
+  margin-bottom: 8px;
+}
+.bench-item .score {
+  font-size: 36px;
+  font-weight: 650;
+  letter-spacing: -.03em;
+  color: var(--text);
+}
+.bench-item .score .pct { color: var(--muted); font-size: 20px; font-weight: 450; }
+.bench-item .bar {
+  margin-top: 16px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bench-item .bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Comparison table */
+.cmp-wrap { margin-top: 48px; overflow-x: auto; }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  font-weight: 500;
+}
+td { color: var(--muted); }
+td.model { color: var(--text); font-weight: 500; }
+td.model .sub { font-size: 11px; color: var(--muted); font-weight: 400; }
+tr:last-child td { border-bottom: none; }
+.ts { font-family: ui-monospace, 'SF Mono', monospace; font-size: 12px; }
+
+/* Pricing */
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 32px;
+}
+.price-cell {
+  background: var(--bg-2);
+  padding: 28px;
+}
+.price-cell .tier { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.price-cell .amt {
+  font-size: 28px;
+  font-weight: 650;
+  letter-spacing: -.02em;
+  margin-bottom: 2px;
+}
+.price-cell .amt .u { font-size: 13px; color: var(--muted); font-weight: 400; }
+.price-cell .per { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+.price-cell ul { list-style: none; }
+.price-cell li {
+  font-size: 13px;
+  color: var(--muted);
+  padding: 4px 0;
+  position: relative;
+  padding-left: 16px;
+}
+.price-cell li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 12px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* CTA */
+.cta-s { text-align: center; padding: 100px 0; }
+.cta-s h2 { margin-bottom: 12px; }
+.cta-s p { margin: 0 auto 28px; }
+.cta-s .cta-row { justify-content: center; }
+
+/* Footer */
+footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--muted);
+}
+footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+footer a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 20px;
+  transition: color .2s;
+}
+footer a:hover { color: var(--text); }
+
+/* Scroll reveal */
+.rv {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+}
+.rv.n { opacity: 1; transform: none; }
+.rv.d1 { transition-delay: .06s; }
+.rv.d2 { transition-delay: .12s; }
+.rv.d3 { transition-delay: .18s; }
+
+@media (max-width: 768px) {
+  section { padding: 64px 0; }
+  .arch-grid, .feat-row { grid-template-columns: 1fr; }
+  .bench-grid { grid-template-columns: 1fr; }
+  .price-grid { grid-template-columns: 1fr; }
+  .colibri-card { grid-template-columns: 1fr; gap: 24px; }
+  .hero-metrics { gap: 24px; }
+  .nav-l { display: none; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 28px; }
+  .s-title { font-size: 24px; }
+  .bench-item .score { font-size: 28px; }
+  .price-cell { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#" style="font-weight: 600; color: var(--text); letter-spacing: -.01em;">GLM-5.2</a>
+    <div class="nav-l">
+      <a href="#arch">Architettura</a>
+      <a href="#feat">Capacità</a>
+      <a href="#colibri">colibrì</a>
+      <a href="#bench">Benchmark</a>
+      <a href="#price">Prezzi</a>
+    </div>
+    <div class="nav-r"><a href="#cta" class="btn btn-p">Inizia</a></div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rv">
+      <div class="s-eyebrow">Zhipu AI · Gennaio 2026</div>
+      <h1>GLM-5.2<br>744 miliardi, 1 milione di contesto.</h1>
+      <p>Mixture-of-Experts open source. 40B parametri attivi per token. Competitivo con modelli chiusi, eseguibile su CPU con 25 GB di RAM.</p>
+      <div class="cta-row">
+        <a href="#bench" class="btn btn-p">Vedi benchmark</a>
+        <a href="#colibri" class="btn btn-g">colibrì runtime</a>
+      </div>
+    </div>
+    <div class="hero-metrics">
+      <div class="metric rv d1"><div class="value">744B</div><div class="label">Parametri totali</div></div>
+      <div class="metric rv d2"><div class="value">40B</div><div class="label">Attivi per token</div></div>
+      <div class="metric rv d1"><div class="value">1M</div><div class="label">Token di contesto</div></div>
+      <div class="metric rv d2"><div class="value">256</div><div class="label">Esperti MoE</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="arch">
+  <div class="wrap">
+    <div class="rv"><div class="s-eyebrow">Architettura</div></div>
+    <h2 class="s-title rv d1">MLA + MoE, 75 layer.</h2>
+    <p class="s-sub rv d2">Attention compressa in spazio latente, 256 esperti con routing sigmoid, decoding speculativo multi-token. I pesi in int4 occupano 9.9 GB in RAM.</p>
+    <div class="arch-grid rv d2">
+      <div class="arch-item">
+        <div class="tag">MLA</div>
+        <h3>Multi-Head Latent Attention</h3>
+        <p>KV-cache compressa: 576 float per token invece di 32.768. Contesto da 1M token con memoria ridotta del 57×.</p>
+      </div>
+      <div class="arch-item">
+        <div class="tag">MoE · 256 esperti</div>
+        <h3>Sigmoid Router</h3>
+        <p>Routing indipendente per ogni esperto. Attivazione stabile, bilanciamento naturale del carico. Stile DeepSeek-V3.</p>
+      </div>
+      <div class="arch-item">
+        <div class="tag">MTP</div>
+        <h3>Multi-Token Prediction</h3>
+        <p>Decoding speculativo con testine int8. Accept rate 39-59%. Fino a 2.8 token per forward, latenza dimezzata.</p>
+      </div>
+      <div class="arch-item">
+        <div class="tag">int4</div>
+        <h3>Quantizzazione nativa</h3>
+        <p>Pesi a 4 bit. 9.9 GB residenti in RAM. Inferenza su CPU consumer senza GPU. Runtime colibrì in C puro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="feat" style="border-top: 1px solid var(--border);">
+  <div class="wrap">
+    <div class="rv"><div class="s-eyebrow">Capacità</div></div>
+    <h2 class="s-title rv d1">Coding, tool calling, multilingua.</h2>
+    <p class="s-sub rv d2">Sei aree chiave. Dati da benchmark pubblici.</p>
+    <div class="feat-list rv d2">
+      <div class="feat-row">
+        <div class="feat-cell">
+          <h3>Coding</h3>
+          <p>HumanEval 84.7%. Refactoring, debug, completamento di interi repository con contesto 1M.</p>
+        </div>
+        <div class="feat-cell">
+          <h3>Tool calling</h3>
+          <p>Funzioni strutturate, agenti multi-step, chiamate parallele. Formato affidabile e deterministico.</p>
+        </div>
+      </div>
+      <div class="feat-row" style="border-top: 1px solid var(--border);">
+        <div class="feat-cell">
+          <h3>Bilingue</h3>
+          <p>Cinese e inglese nativi. Comprensione culturale profonda, non traduzione automatica.</p>
+        </div>
+        <div class="feat-cell">
+          <h3>Matematica</h3>
+          <p>GSM8K 91.3%. Deduzioni multi-passo, verifica, robustezza su problemi lunghi.</p>
+        </div>
+      </div>
+      <div class="feat-row" style="border-top: 1px solid var(--border);">
+        <div class="feat-cell">
+          <h3>Open source</h3>
+          <p>Apache 2.0 (codice), MIT (pesi). Self-hosting, audit, modifica senza restrizioni.</p>
+        </div>
+        <div class="feat-cell">
+          <h3>Inferenza leggera</h3>
+          <p>25 GB di RAM su CPU consumer via colibrì. Nessuna GPU obbligatoria.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="colibri" style="border-top: 1px solid var(--border);">
+  <div class="wrap">
+    <div class="rv"><div class="s-eyebrow">colibrì</div></div>
+    <h2 class="s-title rv d1">Esegui su CPU, niente GPU.</h2>
+    <div class="colibri-card">
+      <div class="colibri-info rv d2">
+        <p style="font-size: 14px; color: var(--muted); line-height: 1.6;">Il runtime colibrì carica GLM-5.2 in 9.9 GB di RAM e lo esegue su CPU x86. Un singolo file C, zero dipendenze. 25 GB di RAM sono sufficienti.</p>
+        <div style="margin-top: 20px;">
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;"><span>RAM richiesta</span><span>25 GB</span></div>
+            <div style="height: 4px; background: var(--border); border-radius: 2px;"><div style="width: 78%; height: 100%; background: var(--accent); border-radius: 2px;"></div></div>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;"><span>Footprint residente</span><span>9.9 GB</span></div>
+            <div style="height: 4px; background: var(--border); border-radius: 2px;"><div style="width: 31%; height: 100%; background: var(--accent); border-radius: 2px;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="term rv d2">
+        <div class="term-h"><span class="d"></span><span class="d"></span><span class="d"></span><span style="margin-left: 8px; color: var(--muted);">colibrì · glm-5.2</span></div>
+        <div class="term-b">
+          <div><span class="i">$</span> <span class="pr">colibri load glm-5.2-int4</span></div>
+          <div class="ok">✓ 9.9 GB residenti · 256 esperti</div>
+          <div class="ok">✓ contesto: 1.048.576 token</div>
+          <div class="ok">✓ pronto in 3.2 s</div>
+          <br>
+          <div><span class="i">$</span> <span class="pr">colibri chat</span></div>
+          <div><span class="i">user&rang;</span> quicksort in Python</div>
+          <div class="ok">✓ 247 tok/s · CPU 8-core</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="bench" style="border-top: 1px solid var(--border);">
+  <div class="wrap">
+    <div class="rv"><div class="s-eyebrow">Benchmark</div></div>
+    <h2 class="s-title rv d1">Concorrenziale con modelli chiusi.</h2>
+    <p class="s-sub rv d2">Valutato con precisione int4 su suite standard cinesi e inglesi.</p>
+    <div class="bench-grid rv d2">
+      <div class="bench-item">
+        <div class="name">MMLU</div>
+        <div class="score">89.2<span class="pct">%</span></div>
+        <div class="bar"><i style="width:89.2%"></i></div>
+      </div>
+      <div class="bench-item">
+        <div class="name">HumanEval</div>
+        <div class="score">84.7<span class="pct">%</span></div>
+        <div class="bar"><i style="width:84.7%"></i></div>
+      </div>
+      <div class="bench-item">
+        <div class="name">GSM8K</div>
+        <div class="score">91.3<span class="pct">%</span></div>
+        <div class="bar"><i style="width:91.3%"></i></div>
+      </div>
+    </div>
+    <div class="rv d2">
+      <div class="s-eyebrow" style="margin-top: 60px;">Confronto</div>
+      <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">GLM-5.2, DeepSeek V4 Flash, Grok 4.5</h3>
+      <div class="cmp-wrap">
+        <table>
+          <thead>
+            <tr><th>Modello</th><th>Params</th><th>Attivi</th><th>Contesto</th><th>Licenza</th><th>MMLU</th><th>HumanEval</th><th>GSM8K</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="model">GLM-5.2<div class="sub">Zhipu AI</div></td><td class="ts">744B</td><td class="ts">40B</td><td class="ts">1M</td><td>Apache 2.0 · MIT</td><td class="ts">89.2</td><td class="ts">84.7</td><td class="ts">91.3</td></tr>
+            <tr><td class="model">DeepSeek V4 Flash<div class="sub">DeepSeek</div></td><td class="ts">685B</td><td class="ts">22B</td><td class="ts">128K</td><td>MIT</td><td class="ts">87.4</td><td class="ts">82.1</td><td class="ts">89.6</td></tr>
+            <tr><td class="model">Grok 4.5<div class="sub">xAI</div></td><td class="ts">~620B</td><td class="ts">38B</td><td class="ts">256K</td><td>Proprietario</td><td class="ts">90.1</td><td class="ts">86.2</td><td class="ts">92.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="price" style="border-top: 1px solid var(--border);">
+  <div class="wrap">
+    <div class="rv"><div class="s-eyebrow">Prezzi</div></div>
+    <h2 class="s-title rv d1">Tre modalità di accesso.</h2>
+    <div class="price-grid rv d2">
+      <div class="price-cell">
+        <div class="tier">API · Base</div>
+        <div class="amt">€0.40<span class="u"> /M tok</span></div>
+        <div class="per">input · €1.20 output</div>
+        <ul>
+          <li>Endpoint EU</li>
+          <li>Contesto 1M</li>
+          <li>Tool calling</li>
+        </ul>
+      </div>
+      <div class="price-cell">
+        <div class="tier">API · Pro</div>
+        <div class="amt">€0.28<span class="u"> /M tok</span></div>
+        <div class="per">input · €0.85 output</div>
+        <ul>
+          <li>Priorità latenza</li>
+          <li>10.000 RPM</li>
+          <li>SLA 99.9%</li>
+        </ul>
+      </div>
+      <div class="price-cell">
+        <div class="tier">Self-hosted</div>
+        <div class="amt">Gratis</div>
+        <div class="per">Pesi MIT · Codice Apache 2.0</div>
+        <ul>
+          <li>Runtime colibrì</li>
+          <li>25 GB RAM</li>
+          <li>int4 quantizzato</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="cta-s" style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="wrap">
+    <div class="rv">
+      <div class="s-eyebrow" style="margin-bottom: 12px;">Inizia oggi</div>
+      <h2 class="s-title" style="margin-bottom: 12px;">744B parametri, 40B attivi,<br>1M contesto, open source.</h2>
+      <div class="cta-row">
+        <a href="#" class="btn btn-p">Crea chiave API</a>
+        <a href="#" class="btn btn-g">Scarica i pesi</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 Zhipu AI · Apache 2.0 · MIT</div>
+    <div>
+      <a href="#">Documentazione</a>
+      <a href="#">GitHub</a>
+      <a href="#">Hugging Face</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('n'); io.unobserve(e.target); }
+  });
+}, { threshold: .1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
