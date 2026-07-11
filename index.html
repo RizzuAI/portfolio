@@ -1,928 +1,649 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pierluigi Rizzu — AI Agent Architect</title>
-<style>
-  :root {
-    --bg: #000000;
-    --text: #f5f5f7;
-    --text-soft: #a8a8b0;
-    --text-mute: #6b6b73;
-    --accent: #14b8a6;
-    --accent-bright: #2dd4bf;
-    --accent-deep: #0d9488;
-    --line: rgba(255,255,255,0.08);
-    --line-strong: rgba(255,255,255,0.18);
-    --surface: #0a0a0a;
-    --surface-2: #121214;
-    --ease-quiet: cubic-bezier(.22, 1, .36, 1);
-    --ease-precise: cubic-bezier(.4, 0, .2, 1);
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pierluigi Rizzu | AI Agent Architect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #000;
+            --text: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent: #14b8a6;
+            --surface: #1d1d1f;
+            --surface-hover: #2d2d2f;
+        }
 
-  html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-weight: 400;
-    line-height: 1.6;
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
 
-  /* ===== NAV ===== */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 1.25rem 2rem;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .nav-brand {
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.02em;
-    color: var(--text);
-  }
-  .nav-brand span { color: var(--accent-bright); }
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-  .nav-links a {
-    color: var(--text-soft);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    transition: color 280ms var(--ease-quiet);
-  }
-  .nav-links a:hover { color: var(--accent-bright); }
-  .nav-meta {
-    font-size: 0.75rem;
-    color: var(--text-mute);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
 
-  /* ===== HERO ===== */
-  .hero {
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 0;
-    padding: 7rem 2rem 4rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    align-items: center;
-  }
-  .hero-left {
-    padding-right: 3rem;
-  }
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent-bright);
-    margin-bottom: 2rem;
-  }
-  .hero-eyebrow::before {
-    content: '';
-    width: 28px; height: 1px;
-    background: var(--accent-bright);
-  }
-  .hero h1 {
-    font-size: clamp(2.6rem, 5.5vw, 4.6rem);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 1.75rem;
-  }
-  .hero h1 em {
-    font-style: normal;
-    color: var(--accent-bright);
-    font-weight: 700;
-  }
-  .hero-sub {
-    font-size: 1.1rem;
-    font-weight: 400;
-    color: var(--text-soft);
-    line-height: 1.6;
-    max-width: 520px;
-    margin-bottom: 2.5rem;
-  }
-  .hero-cta {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.95rem 1.6rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 280ms var(--ease-quiet);
-    cursor: pointer;
-    border: none;
-  }
-  .btn-primary {
-    background: var(--accent);
-    color: #000;
-  }
-  .btn-primary:hover {
-    background: var(--accent-bright);
-    transform: translateY(-2px);
-  }
-  .btn-ghost {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--line-strong);
-  }
-  .btn-ghost:hover {
-    border-color: var(--accent-bright);
-    color: var(--accent-bright);
-  }
-  .btn .arrow {
-    transition: transform 280ms var(--ease-quiet);
-  }
-  .btn:hover .arrow { transform: translateX(4px); }
+        /* Hero - 50vh max */
+        .hero {
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 24px;
+            position: relative;
+        }
 
-  /* ===== HERO RIGHT — TERMINAL PANEL ===== */
-  .hero-right {
-    position: relative;
-    height: 540px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #0f766e 100%);
-    overflow: hidden;
-    box-shadow: 0 30px 80px -20px rgba(20,184,166,0.4), 0 0 0 1px rgba(45,212,191,0.3);
-  }
-  .terminal {
-    position: absolute;
-    inset: 0;
-    padding: 1.5rem 1.75rem;
-    display: flex;
-    flex-direction: column;
-    color: #000;
-    font-family: "SF Mono", "Cascadia Code", "Courier New", monospace;
-  }
-  .terminal-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
-    margin-bottom: 1rem;
-  }
-  .terminal-dot {
-    width: 11px; height: 11px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.25);
-  }
-  .terminal-title {
-    margin-left: auto;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    color: rgba(0,0,0,0.7);
-  }
-  .terminal-body {
-    flex: 1;
-    font-size: 0.82rem;
-    line-height: 1.7;
-    font-weight: 500;
-    color: rgba(0,0,0,0.85);
-    overflow: hidden;
-  }
-  .terminal-body .prompt { color: rgba(0,0,0,0.55); }
-  .terminal-body .cmd { font-weight: 700; color: #000; }
-  .terminal-body .out { color: rgba(0,0,0,0.7); }
-  .terminal-body .ok { color: #064e3b; font-weight: 700; }
-  .terminal-body .accent { color: #000; font-weight: 700; background: rgba(255,255,255,0.35); padding: 0 4px; border-radius: 2px; }
-  .cursor {
-    display: inline-block;
-    width: 8px; height: 14px;
-    background: #000;
-    animation: blink 1.1s infinite step-end;
-    vertical-align: middle;
-    margin-left: 2px;
-  }
-  @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--surface);
+            border-radius: 100px;
+            font-size: 14px;
+            color: var(--accent);
+            margin-bottom: 24px;
+            border: 1px solid var(--accent);
+        }
 
-  .hero-stats {
-    display: flex;
-    gap: 2.5rem;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--line);
-  }
-  .stat-num {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-  .stat-label {
-    font-size: 0.72rem;
-    color: var(--text-mute);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-top: 0.25rem;
-  }
+        .hero-badge::before {
+            content: "◆";
+            font-size: 10px;
+        }
 
-  /* ===== SECTION GENERIC ===== */
-  section {
-    padding: 8rem 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  .section-label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent-bright);
-    margin-bottom: 2rem;
-  }
-  .section-label::before {
-    content: '';
-    width: 24px; height: 1px;
-    background: var(--accent-bright);
-  }
-  .section-title {
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 4rem;
-    max-width: 900px;
-  }
+        .hero h1 {
+            font-size: clamp(40px, 8vw, 72px);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
 
-  /* ===== ABOUT — STICKY SCROLL ===== */
-  .about-wrap {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-  .about-left {
-    position: sticky;
-    top: 100px;
-    height: calc(100vh - 100px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .about-left h2 {
-    font-size: clamp(2.2rem, 4.5vw, 3.6rem);
-    font-weight: 700;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.75rem;
-  }
-  .about-left h2 em {
-    font-style: normal;
-    color: var(--accent-bright);
-  }
-  .about-left p {
-    font-size: 1.05rem;
-    color: var(--text-soft);
-    max-width: 460px;
-    line-height: 1.7;
-  }
-  .about-right {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-  }
-  .about-card {
-    padding: 2.5rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    transition: border-color 400ms var(--ease-quiet);
-  }
-  .about-card:hover { border-color: var(--accent-deep); }
-  .about-card-num {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    color: var(--accent-bright);
-    margin-bottom: 1rem;
-  }
-  .about-card h3 {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 0.85rem;
-    color: var(--text);
-  }
-  .about-card p {
-    color: var(--text-soft);
-    font-size: 0.95rem;
-    line-height: 1.65;
-  }
+        .hero-title {
+            font-size: clamp(20px, 4vw, 28px);
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 32px;
+        }
 
-  /* ===== WORK — STICKY SCROLL ===== */
-  .work-wrap {
-    display: grid;
-    grid-template-columns: 1fr 1.4fr;
-    gap: 4rem;
-    align-items: start;
-  }
-  .work-left {
-    position: sticky;
-    top: 100px;
-    height: calc(100vh - 100px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .work-left h2 {
-    font-size: clamp(2.2rem, 4.5vw, 3.6rem);
-    font-weight: 700;
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.5rem;
-  }
-  .work-left p {
-    color: var(--text-soft);
-    font-size: 1.05rem;
-    max-width: 420px;
-    line-height: 1.7;
-  }
-  .work-right {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-  }
-  .project {
-    padding: 2.5rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    transition: all 400ms var(--ease-quiet);
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-  .project:hover {
-    border-color: var(--accent);
-    transform: translateX(8px);
-  }
-  .project-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 1.25rem;
-  }
-  .project-tag {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent-bright);
-  }
-  .project-year {
-    font-size: 0.85rem;
-    color: var(--text-mute);
-    font-weight: 500;
-  }
-  .project h3 {
-    font-size: 1.7rem;
-    font-weight: 700;
-    margin-bottom: 0.85rem;
-    letter-spacing: -0.01em;
-  }
-  .project p {
-    color: var(--text-soft);
-    font-size: 0.98rem;
-    line-height: 1.65;
-    margin-bottom: 1.5rem;
-  }
-  .project-stack {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .stack-pill {
-    padding: 0.35rem 0.75rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--text-soft);
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--line);
-    border-radius: 100px;
-    letter-spacing: 0.03em;
-  }
+        .hero-handle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
 
-  /* ===== SKILLS GRID ===== */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  .skill-card {
-    padding: 2rem;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    transition: all 400ms var(--ease-quiet);
-  }
-  .skill-card:hover {
-    border-color: var(--accent-deep);
-    background: var(--surface-2);
-  }
-  .skill-icon {
-    font-size: 1.5rem;
-    color: var(--accent-bright);
-    margin-bottom: 1rem;
-    font-weight: 700;
-    font-family: "SF Mono", monospace;
-  }
-  .skill-card h4 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin-bottom: 0.6rem;
-    color: var(--text);
-  }
-  .skill-card p {
-    font-size: 0.88rem;
-    color: var(--text-soft);
-    line-height: 1.6;
-  }
-  .skill-list {
-    margin-top: 1rem;
-    list-style: none;
-    font-size: 0.8rem;
-    color: var(--text-mute);
-  }
-  .skill-list li {
-    padding: 0.25rem 0;
-    border-bottom: 1px dashed var(--line);
-  }
-  .skill-list li:last-child { border: none; }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
 
-  /* ===== CONTACT ===== */
-  .contact {
-    text-align: center;
-    padding: 10rem 2rem;
-    border-top: 1px solid var(--line);
-  }
-  .contact h2 {
-    font-size: clamp(2.4rem, 5vw, 4rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.5rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .contact h2 em {
-    font-style: normal;
-    color: var(--accent-bright);
-  }
-  .contact p {
-    color: var(--text-soft);
-    font-size: 1.1rem;
-    max-width: 540px;
-    margin: 0 auto 3rem;
-    line-height: 1.7;
-  }
-  .contact-links {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .contact-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 1rem 1.75rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 4px;
-    color: var(--text);
-    text-decoration: none;
-    font-size: 0.88rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    transition: all 280ms var(--ease-quiet);
-  }
-  .contact-link:hover {
-    border-color: var(--accent-bright);
-    color: var(--accent-bright);
-    transform: translateY(-2px);
-  }
-  .contact-link .label {
-    font-size: 0.7rem;
-    color: var(--text-mute);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-right: 0.4rem;
-  }
+        .btn {
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-  /* ===== FOOTER ===== */
-  footer {
-    padding: 2.5rem 2rem;
-    border-top: 1px solid var(--line);
-    text-align: center;
-    color: var(--text-mute);
-    font-size: 0.78rem;
-    letter-spacing: 0.05em;
-  }
-  footer span { color: var(--accent-bright); }
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+        }
 
-  /* ===== REVEAL ANIMATION ===== */
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 900ms var(--ease-quiet), transform 900ms var(--ease-quiet);
-  }
-  .reveal.is-in {
-    opacity: 1;
-    transform: none;
-  }
+        .btn-primary:hover {
+            background: #0d9488;
+        }
 
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 900px) {
-    .hero, .about-wrap, .work-wrap {
-      grid-template-columns: 1fr;
-    }
-    .hero-right { height: 380px; margin-top: 2rem; }
-    .about-left, .work-left {
-      position: static;
-      height: auto;
-      padding-bottom: 2rem;
-    }
-    .skills-grid { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
-    section { padding: 5rem 1.5rem; }
-    .hero { padding: 6rem 1.5rem 3rem; }
-  }
-</style>
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--surface-hover);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-hover);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            justify-content: center;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+        }
+
+        section:nth-child(even) {
+            background: var(--surface);
+        }
+
+        .section-header {
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        /* About */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .about-card {
+            padding: 32px;
+            background: var(--bg);
+            border-radius: 16px;
+            border: 1px solid var(--surface-hover);
+        }
+
+        .about-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .about-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Work */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .work-card {
+            background: var(--bg);
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid var(--surface-hover);
+            transition: all 0.2s ease;
+        }
+
+        .work-card:hover {
+            border-color: var(--accent);
+        }
+
+        .work-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .work-status::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .work-card h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .work-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .work-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .work-stack span {
+            padding: 6px 12px;
+            background: var(--surface);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .skill-card {
+            padding: 28px;
+            background: var(--bg);
+            border-radius: 16px;
+            border: 1px solid var(--surface-hover);
+        }
+
+        .skill-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .skill-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .skill-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .skill-tags span {
+            padding: 4px 10px;
+            background: var(--surface);
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        /* Contact */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .contact-card {
+            padding: 32px;
+            background: var(--surface);
+            border-radius: 16px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .contact-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        .contact-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--bg);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+        }
+
+        .contact-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .contact-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero {
+                min-height: auto;
+                padding: 48px 24px;
+            }
+
+            .hero-stats {
+                gap: 32px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .about-grid,
+            .work-grid,
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-card,
+            .work-card,
+            .skill-card,
+            .contact-card {
+                padding: 24px;
+            }
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
-
-<nav>
-  <div class="nav-brand">Pierluigi Rizzu <span>·</span> RizzuAI</div>
-  <ul class="nav-links">
-    <li><a href="#about">Chi sono</a></li>
-    <li><a href="#work">Lavori</a></li>
-    <li><a href="#skills">Competenze</a></li>
-    <li><a href="#contact">Contatti</a></li>
-  </ul>
-  <div class="nav-meta">AI Agent Architect</div>
-</nav>
-
-<!-- ===== HERO ===== -->
-<section class="hero">
-  <div class="hero-left">
-    <div class="hero-eyebrow">Hermes Agent · Cagliari, IT</div>
-    <h1>Architetto di <em>agenti AI</em> che lavorano mentre tu dormi.</h1>
-    <p class="hero-sub">
-      Progetto sistemi multi-agente autonomi per Hermes Agent. Tool calling, memoria persistente,
-      orchestrazione di LLM in produzione. Ogni agente è una decisione architetturale, non un wrapper.
-    </p>
-    <div class="hero-cta">
-      <a href="#work" class="btn btn-primary">
-        Vedi i progetti <span class="arrow">→</span>
-      </a>
-      <a href="https://github.com/RizzuAI" target="_blank" rel="noopener" class="btn btn-ghost">
-        GitHub @RizzuAI
-      </a>
-    </div>
-    <div class="hero-stats">
-      <div>
-        <div class="stat-num">14</div>
-        <div class="stat-label">Agenti in produzione</div>
-      </div>
-      <div>
-        <div class="stat-num">2.3M</div>
-        <div class="stat-label">Tool call / mese</div>
-      </div>
-      <div>
-        <div class="stat-num">99.4%</div>
-        <div class="stat-label">Uptime agenti</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-right">
-    <div class="terminal">
-      <div class="terminal-bar">
-        <div class="terminal-dot"></div>
-        <div class="terminal-dot"></div>
-        <div class="terminal-dot"></div>
-        <div class="terminal-title">hermes-agent — zsh</div>
-      </div>
-      <div class="terminal-body">
-        <div><span class="prompt">~/hermes $</span> <span class="cmd">hermes deploy agent:scout</span></div>
-        <div class="out">→ inizializzazione contesto...</div>
-        <div class="out">→ caricamento tools [web, db, vector] <span class="ok">ok</span></div>
-        <div class="out">→ bind modello <span class="accent">gpt-4o</span> <span class="ok">ok</span></div>
-        <div class="out">→ memoria persistente: postgres+pgvector</div>
-        <div class="out">→ policy guardrails: 6 regole attive</div>
-        <div>&nbsp;</div>
-        <div><span class="prompt">~/hermes $</span> <span class="cmd">scout.run("analizza mercato SaaS")</span></div>
-        <div class="out">→ planning: 4 sotto-task</div>
-        <div class="out">→ [1/4] ricerca fonti <span class="ok">done</span></div>
-        <div class="out">→ [2/4] estrazione dati <span class="ok">done</span></div>
-        <div class="out">→ [3/4] sintesi report <span class="ok">done</span></div>
-        <div class="out">→ [4/4] consegna utente <span class="ok">done</span></div>
-        <div>&nbsp;</div>
-        <div><span class="ok">✓ agente completato in 47.2s</span></div>
-        <div><span class="prompt">~/hermes $</span> <span class="cursor"></span></div>
-      </div>
-    </div>
-    <div style="text-align:center;padding:40px 0;color:#636366;font-size:13px;letter-spacing:.06em;animation:fadeUp 1s .6s both">u2193 Scorri per esplorare</div>
-  </div>
-</section>
-
-<!-- ===== ABOUT ===== -->
-<section id="about">
-  <div class="section-label">Chi sono</div>
-  <div class="about-wrap">
-    <div class="about-left reveal">
-      <h2>Costruisco <em>infrastrutture</em> per agenti che prendono decisioni reali.</h2>
-      <p>
-        Lavoro come AI Agent Architect presso Hermes Agent. Il mio lavoro non è prompt engineering:
-        è disegnare sistemi dove gli LLM diventano componenti affidabili all'interno di pipeline produttive.
-        Memoria, tool calling, fallback, osservabilità. Ogni agente è un sistema distribuito.
-      </p>
-    </div>
-    <div class="about-right">
-      <div class="about-card reveal">
-        <div class="about-card-num">01 — APPROCCIO</div>
-        <h3>Architettura prima del prompt</h3>
-        <p>
-          Un agente non è un modello. È il sistema che lo circonda: routing, memoria, validazione,
-          retry policy. Progetto l'architettura prima di scrivere una sola istruzione.
-        </p>
-      </div>
-      <div class="about-card reveal">
-        <div class="about-card-num">02 — PRODUZIONE</div>
-        <h3>Agenti che vivono in produzione</h3>
-        <p>
-          Ogni agente che spedisco ha metriche, tracing, guardrails e fallback.
-          Niente demo. Niente "funziona sul mio terminale". Roba che gira sotto carico.
-        </p>
-      </div>
-      <div class="about-card reveal">
-        <div class="about-card-num">03 — FILOSOFIA</div>
-        <h3>Strumenti piccoli, composizione grande</h3>
-        <p>
-          Preferisco molti agenti specializzati che collaborano a un solo mega-agente.
-          Orchestrazione leggera, responsabilità chiare, debug possibile.
-        </p>
-      </div>
-      <div class="about-card reveal">
-        <div class="about-card-num">04 — CONTESTO</div>
-        <h3>Sviluppo in pubblico</h3>
-        <p>
-          Tutto il mio lavoro esplorativo è su GitHub. Issue, README, esperimenti falliti.
-          Costruisco in pubblico perché è il modo più veloce per imparare dagli altri.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== WORK ===== -->
-<section id="work">
-  <div class="section-label">Lavori selezionati</div>
-  <div class="work-wrap">
-    <div class="work-left reveal">
-      <h2>Tre progetti. <em>Tre problemi</em> architetturali diversi.</h2>
-      <p>
-        Ogni progetto qui sotto è un agente o un sistema di agenti che risolve un problema
-        specifico con un'architettura specifica. Niente boilerplate, niente copia-incolla dai tutorial.
-      </p>
-    </div>
-    <div class="work-right">
-      <a href="https://github.com/RizzuAI" target="_blank" rel="noopener" class="project reveal">
-        <div class="project-head">
-          <span class="project-tag">Multi-Agent Orchestration</span>
-          <span class="project-year">2024</span>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">Hermes Agent</div>
+            <h1>Pierluigi Rizzu</h1>
+            <p class="hero-title">AI Agent Architect</p>
+            <p class="hero-handle">@RizzuAI</p>
+            <div class="hero-buttons">
+                <a href="mailto:pierluigirizzu@agentmail.to" class="btn btn-primary">Contattami</a>
+                <a href="https://github.com/RizzuAI" target="_blank" class="btn btn-secondary">GitHub</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">50+</div>
+                    <div class="stat-label">Agent Deployed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Anni Esperienza</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
         </div>
-        <h3>Hermes Scout</h3>
-        <p>
-          Sistema multi-agente per ricerca di mercato autonoma. Quattro agenti specializzati
-          (ricerca, estrazione, sintesi, validazione) orchestrati con un supervisor che gestisce
-          fallback e conflitti. Memoria condivisa su pgvector, tracing completo con OpenTelemetry.
-        </p>
-        <div class="project-stack">
-          <span class="stack-pill">Python</span>
-          <span class="stack-pill">LangGraph</span>
-          <span class="stack-pill">pgvector</span>
-          <span class="stack-pill">OpenTelemetry</span>
-          <span class="stack-pill">FastAPI</span>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>About Me</h2>
+                <p>Come costruisco sistemi AI autonomi</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Approccio</h3>
+                    <p>Progetto agenti come sistemi distribuiti: ogni componente ha responsabilità definite, stati tracciabili e capacità di recovery automatica. Niente black box, tutto osservabile e debuggabile.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Stack</h3>
+                    <p>Python per core logic, Rust per componenti critiche di performance, Go per orchestrazione distribuita. LLM via API e self-hosted. Vector DB per memoria semantica, Redis per stato temporaneo.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Filosofia</h3>
+                    <p>Gli agenti devono essere prevedibili prima che intelligenti. Parto da guardrails rigidi, poi allento dove i dati lo giustificano. La sicurezza è feature, non afterthought.</p>
+                </div>
+            </div>
         </div>
-      </a>
+    </section>
 
-      <a href="https://github.com/RizzuAI" target="_blank" rel="noopener" class="project reveal">
-        <div class="project-head">
-          <span class="project-tag">Tool Calling · RAG</span>
-          <span class="project-year">2024</span>
+    <!-- Work -->
+    <section id="work">
+        <div class="container">
+            <div class="section-header">
+                <h2>Work</h2>
+                <p>Sistemi in produzione</p>
+            </div>
+            <div class="work-grid">
+                <div class="work-card">
+                    <div class="work-status">Live in Production</div>
+                    <h3>Hermes Scout</h3>
+                    <p>Agente di ricerca autonomo che naviga codebase enterprise, identifica dipendenze obsolete e genera PR di refactoring. Gestisce 500+ repo in parallelo.</p>
+                    <div class="work-stack">
+                        <span>Python</span>
+                        <span>Tree-sitter</span>
+                        <span>GitHub API</span>
+                        <span>Celery</span>
+                    </div>
+                </div>
+                <div class="work-card">
+                    <div class="work-status">Live in Production</div>
+                    <h3>Atlas Memory</h3>
+                    <p>Sistema RAG multi-tenant con memoria a lungo termine. Conversazioni persistenti, embedding adaptive, retrieval ibrido sparse-dense. Latenza P95 &lt; 200ms.</p>
+                    <div class="work-stack">
+                        <span>Rust</span>
+                        <span>Qdrant</span>
+                        <span>ONNX</span>
+                        <span>Kafka</span>
+                    </div>
+                </div>
+                <div class="work-card">
+                    <div class="work-status">Live in Production</div>
+                    <h3>Sentinel Policy Engine</h3>
+                    <p>Guardrails runtime per LLM: classificazione input/output, PII detection, rate limiting semantico, audit trail immutabile. Blocca 2M+ richieste/anomala al giorno.</p>
+                    <div class="work-stack">
+                        <span>Go</span>
+                        <span>OPA</span>
+                        <span>Prometheus</span>
+                        <span>ClickHouse</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h3>Atlas Memory</h3>
-        <p>
-          Layer di memoria persistente per agenti long-running. Distinzione tra memoria episodica
-          (sessione), semantica (conoscenza) e procedurale (tool appresi). Recupero ibrido
-          keyword + vettoriale, con auto-consolidamento dei fatti ogni N interazioni.
-        </p>
-        <div class="project-stack">
-          <span class="stack-pill">TypeScript</span>
-          <span class="stack-pill">Postgres</span>
-          <span class="stack-pill">pgvector</span>
-          <span class="stack-pill">BM25</span>
-          <span class="stack-pill">Redis</span>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills">
+        <div class="container">
+            <div class="section-header">
+                <h2>Skills</h2>
+                <p>Competenze tecniche</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">⚡</div>
+                    <h3>Orchestrazione</h3>
+                    <p>Design di flussi multi-agent con gestione stato, retry policy, circuit breakers e osservabilità end-to-end.</p>
+                    <div class="skill-tags">
+                        <span>Temporal</span>
+                        <span>Prefect</span>
+                        <span>Celery</span>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🔧</div>
+                    <h3>Tool Calling</h3>
+                    <p>Function calling affidabile: schema validation, execution sandboxing, result caching e error recovery strutturato.</p>
+                    <div class="skill-tags">
+                        <span>OpenAI</span>
+                        <span>Anthropic</span>
+                        <span>MCP</span>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🧠</div>
+                    <h3>Memoria & RAG</h3>
+                    <p>Architetture di retrieval: embedding models, reranking, query expansion, memoria conversazionale e knowledge graphs.</p>
+                    <div class="skill-tags">
+                        <span>Qdrant</span>
+                        <span>Neo4j</span>
+                        <span>pgvector</span>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🛡️</div>
+                    <h3>Guardrails</h3>
+                    <p>Sicurezza LLM: input validation, output filtering, prompt injection detection, bias mitigation e compliance automation.</p>
+                    <div class="skill-tags">
+                        <span>Lakera</span>
+                        <span>NeMo</span>
+                        <span>LLM Guard</span>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">☁️</div>
+                    <h3>Infrastruttura</h3>
+                    <p>Deploy di agenti su K8s: auto-scaling, cost optimization, multi-region failover e disaster recovery.</p>
+                    <div class="skill-tags">
+                        <span>Kubernetes</span>
+                        <span>Terraform</span>
+                        <span>AWS/GCP</span>
+                    </div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">💻</div>
+                    <h3>Linguaggi</h3>
+                    <p>Polyglot pragmatico: scelgo il linguaggio in base ai vincoli di performance, safety e velocity del team.</p>
+                    <div class="skill-tags">
+                        <span>Python</span>
+                        <span>Rust</span>
+                        <span>Go</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </a>
+    </section>
 
-      <a href="https://github.com/RizzuAI" target="_blank" rel="noopener" class="project reveal">
-        <div class="project-head">
-          <span class="project-tag">Guardrails · Safety</span>
-          <span class="project-year">2023</span>
+    <!-- Contact -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contact</h2>
+                <p>Collaboriamo</p>
+            </div>
+            <div class="contact-grid">
+                <a href="mailto:pierluigirizzu@agentmail.to" class="contact-card">
+                    <div class="contact-icon">✉️</div>
+                    <h3>Email</h3>
+                    <p>pierluigirizzu@agentmail.to</p>
+                </a>
+                <a href="https://github.com/RizzuAI" target="_blank" class="contact-card">
+                    <div class="contact-icon">⚙️</div>
+                    <h3>GitHub</h3>
+                    <p>github.com/RizzuAI</p>
+                </a>
+                <a href="https://x.com/RizzuAI" target="_blank" class="contact-card">
+                    <div class="contact-icon">𝕏</div>
+                    <h3>X / Twitter</h3>
+                    <p>@RizzuAI</p>
+                </a>
+                <a href="https://linkedin.com/in/pierluigirizzu" target="_blank" class="contact-card">
+                    <div class="contact-icon">💼</div>
+                    <h3>LinkedIn</h3>
+                    <p>Pierluigi Rizzu</p>
+                </a>
+            </div>
         </div>
-        <h3>Sentinel Policy Engine</h3>
-        <p>
-          Motore di policy dichiarative per validare output degli agenti prima dell'esecuzione
-          dei tool. Regole in YAML, valutazione in pipeline, blocking opzionale con richiesta
-          di approvazione umana. Usato in produzione su 6 agenti Hermes.
-        </p>
-        <div class="project-stack">
-          <span class="stack-pill">Python</span>
-          <span class="stack-pill">Pydantic</span>
-          <span class="stack-pill">YAML</span>
-          <span class="stack-pill">OPA</span>
-          <span class="stack-pill">Webhook</span>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2024 Pierluigi Rizzu. Built with precision.</p>
         </div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== SKILLS ===== -->
-<section id="skills">
-  <div class="section-label">Competenze</div>
-  <h2 class="section-title reveal">Lo stack che uso ogni giorno, non quello che metto sul CV.</h2>
-  <div class="skills-grid">
-    <div class="skill-card reveal">
-      <div class="skill-icon">{ }</div>
-      <h4>Orchestrazione agenti</h4>
-      <p>Disegno di grafi di agenti, routing condizionale, supervisor pattern, handoff tra ruoli.</p>
-      <ul class="skill-list">
-        <li>LangGraph</li>
-        <li>OpenAI Agents SDK</li>
-        <li>CrewAI</li>
-        <li>Pattern supervisor-worker</li>
-      </ul>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">⌘</div>
-      <h4>Tool calling</h4>
-      <p>Design di interfacce tool, schema validation, retry semantici, parallel function calling.</p>
-      <ul class="skill-list">
-        <li>Function calling OpenAI / Anthropic</li>
-        <li>Pydantic schemas</li>
-        <li>MCP server</li>
-        <li>Tool composition patterns</li>
-      </ul>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">≡</div>
-      <h4>Memoria & RAG</h4>
-      <p>Architetture di memoria ibrida, retrieval denso + sparso, re-ranking, consolidamento.</p>
-      <ul class="skill-list">
-        <li>pgvector / Qdrant</li>
-        <li>BM25 + dense hybrid</li>
-        <li>Cohere re-rank</li>
-        <li>Episodic / semantic split</li>
-      </ul>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">▲</div>
-      <h4>Infrastruttura</h4>
-      <p>Deployment di agenti in produzione: code, worker, osservabilità, autoscaling.</p>
-      <ul class="skill-list">
-        <li>Docker / Compose</li>
-        <li>Postgres + pgvector</li>
-        <li>Redis / BullMQ</li>
-        <li>OpenTelemetry</li>
-      </ul>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">§</div>
-      <h4>Guardrails & safety</h4>
-      <p>Validazione output, policy dichiarative, human-in-the-loop, audit trail completo.</p>
-      <ul class="skill-list">
-        <li>Policy as code</li>
-        <li>Output schema validation</li>
-        <li>Human approval webhook</li>
-        <li>Audit logging</li>
-      </ul>
-    </div>
-    <div class="skill-card reveal">
-      <div class="skill-icon">⌗</div>
-      <h4>Linguaggi</h4>
-      <p>I linguaggi in cui scrivo production code oggi, ordinati per ore settimanali.</p>
-      <ul class="skill-list">
-        <li>Python — quotidiano</li>
-        <li>TypeScript — quotidiano</li>
-        <li>SQL — quotidiano</li>
-        <li>Go — occasionale</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CONTACT ===== -->
-<section id="contact" class="contact">
-  <div class="section-label" style="justify-content: center;">Contatti</div>
-  <h2 class="reveal">Hai un problema che <em>non si risolve</em> con un solo LLM call?</h2>
-  <p class="reveal">
-    Se stai costruendo agenti e hai bisogno di architettura, review, o una seconda opinione
-    su un sistema in produzione — scrivimi. Rispondo entro 48 ore.
-  </p>
-  <div class="contact-links reveal">
-    <a href="https://github.com/RizzuAI" target="_blank" rel="noopener" class="contact-link">
-      <span class="label">GitHub</span> @RizzuAI →
-    </a>
-    <a href="https://twitter.com/RizzuAI" target="_blank" rel="noopener" class="contact-link">
-      <span class="label">X</span> @RizzuAI →
-    </a>
-    <a href="mailto:pierluigi@rizzu.dev" class="contact-link">
-      <span class="label">Email</span> pierluigi@rizzu.dev →
-    </a>
-    <a href="https://www.linkedin.com/in/rizzuai" target="_blank" rel="noopener" class="contact-link">
-      <span class="label">LinkedIn</span> /in/rizzuai →
-    </a>
-  </div>
-</section>
-
-<footer>
-  <p>© 2024 Pierluigi Rizzu · AI Agent Architect @ <span>Hermes Agent</span> · Cagliari, Italia</p>
-</footer>
-
-<script>
-  // Reveal on scroll
-  const io = new system-uisectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.issystem-uisecting) {
-        e.target.classList.add('is-in');
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
-
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-  // Smooth nav active state
-  const navLinks = document.querySelectorAll('.nav-links a');
-  const sections = document.querySelectorAll('section[id]');
-
-  const navIo = new system-uisectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.issystem-uisecting) {
-        const id = e.target.id;
-        navLinks.forEach(l => {
-          l.style.color = l.getAttribute('href') === '#' + id ? 'var(--accent-bright)' : '';
-        });
-      }
-    });
-  }, { threshold: 0.4 });
-
-  sections.forEach(s => navIo.observe(s));
-</script>
-
+    </footer>
 </body>
 </html>
+```
