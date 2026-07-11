@@ -3,523 +3,312 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pierluigi Rizzu - AI Agent Architect</title>
+<title>Pierluigi Rizzu — AI Agent Architect</title>
 <style>
-    :root {
-        --bg: #000000;
-        --text: #f5f5f7;
-        --accent: #14b8a6;
-        --gray: #86868b;
-        --card-bg: #1c1c1e;
-        --ease: cubic-bezier(.16,1,.3,1);
-    }
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:system-ui,-apple-system,'Helvetica Neue',sans-serif;
+  background:#000;color:#f5f5f7;
+  line-height:1.47059;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.w{max-width:1100px;margin:0 auto;padding:0 24px}
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+/* HERO — 3D floating effect */
+.hero{
+  min-height:100vh;display:flex;align-items:center;position:relative;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:-20%;
+  background:radial-gradient(ellipse at 30% 40%, rgba(20,184,166,.08) 0%, transparent 50%),
+             radial-gradient(ellipse at 70% 60%, rgba(20,184,166,.04) 0%, transparent 40%);
+  animation:heroPulse 8s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes heroPulse{
+  0%,100%{transform:scale(1) rotate(0deg)}
+  50%{transform:scale(1.05) rotate(1deg)}
+}
+.hero .w{position:relative;z-index:2}
+.hero .eyebrow{
+  font-size:14px;font-weight:500;color:#14b8a6;
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px;
+  animation:fadeUp 1s .1s both;
+}
+.hero h1{
+  font-size:clamp(48px,9vw,100px);
+  font-weight:700;letter-spacing:-.04em;
+  line-height:.92;margin-bottom:20px;
+  animation:fadeUp 1s .2s both;
+}
+.hero h1 .grad{
+  background:linear-gradient(135deg,#f5f5f7 30%,#14b8a6 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p{
+  font-size:19px;color:#86868b;max-width:500px;line-height:1.6;
+  margin-bottom:36px;animation:fadeUp 1s .35s both;
+}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp 1s .5s both}
+.btn-pri,.btn-sec{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 22px;border-radius:980px;
+  font-size:15px;font-weight:500;text-decoration:none;
+  transition:all .3s cubic-bezier(.16,1,.3,1);
+  cursor:pointer;
+}
+.btn-pri{background:#14b8a6;color:#000;border:none}
+.btn-pri:hover{background:#0d9488;transform:scale(1.04)}
+.btn-sec{border:1px solid #333;color:#f5f5f7}
+.btn-sec:hover{background:rgba(255,255,255,.06);border-color:#f5f5f7;transform:scale(1.04)}
+.hero-stats{
+  display:flex;gap:48px;margin-top:48px;padding-top:32px;
+  border-top:1px solid #1d1d1f;animation:fadeUp 1s .65s both;
+}
+.hs .v{font-size:32px;font-weight:700;letter-spacing:-.02em}
+.hs .l{font-size:13px;color:#636366;margin-top:2px}
 
-    html {
-        scroll-behavior: smooth;
-    }
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:none}
+}
 
-    body {
-        background-color: var(--bg);
-        color: var(--text);
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        line-height: 1.5;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-    }
+/* STICKY ZOOM SECTIONS */
+.zoom-section{
+  min-height:200vh;position:relative;
+  display:flex;align-items:flex-start;
+}
+.zoom-sticky{
+  position:sticky;top:0;height:100vh;
+  display:flex;align-items:center;width:100%;
+  overflow:hidden;
+}
+.zoom-sticky .w{width:100%;z-index:2}
+.zoom-sticky .bg-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%, rgba(20,184,166,.06), transparent 60%);
+  opacity:0;transition:opacity .5s;
+  pointer-events:none;
+}
+.zoom-label{
+  font-size:14px;font-weight:500;color:#14b8a6;
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;
+}
+.zoom-title{
+  font-size:clamp(48px,7vw,80px);
+  font-weight:700;letter-spacing:-.03em;line-height:.95;
+  margin-bottom:16px;
+}
+.zoom-sub{
+  font-size:18px;color:#86868b;max-width:480px;line-height:1.5;
+}
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
+/* Scrollable content that scrolls OVER the sticky section */
+.zoom-content{
+  position:relative;z-index:3;
+  pointer-events:none;
+}
+.zoom-content > *{pointer-events:auto}
+.zc-block{
+  min-height:80vh;display:flex;align-items:center;
+  padding:60px 0;
+}
+.zc-block:first-child{margin-top:80vh}
+.zc-inner{
+  background:rgba(28,28,30,.85);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:20px;padding:40px;max-width:600px;margin-left:auto;
+  transition:transform .6s cubic-bezier(.16,1,.3,1),opacity .6s;
+}
+.zc-inner h3{font-size:24px;font-weight:600;margin-bottom:8px}
+.zc-inner h3 .num{color:#14b8a6;font-weight:400;margin-right:6px}
+.zc-inner p{font-size:15px;color:#a1a1aa;line-height:1.6}
 
-    /* HERO */
-    .hero {
-        min-height: 60vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 6rem 0 4rem;
-        opacity: 0;
-        animation: slideUp 1s var(--ease) forwards;
-    }
+/* Project cards in zoom section */
+.zc-projects{display:flex;flex-direction:column;gap:24px;padding:40px 0}
+.zc-project{
+  background:rgba(28,28,30,.85);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:20px;padding:32px;max-width:600px;margin-left:auto;
+  transition:transform .6s cubic-bezier(.16,1,.3,1);
+}
+.zc-project:hover{transform:scale(1.02)}
+.zc-project .tag{
+  display:inline-block;font-size:11px;font-weight:600;
+  color:#14b8a6;background:rgba(20,184,166,.1);
+  padding:3px 10px;border-radius:980px;margin-bottom:10px;
+  letter-spacing:.04em;
+}
+.zc-project h3{font-size:22px;font-weight:600;margin-bottom:6px}
+.zc-project p{font-size:14px;color:#a1a1aa;line-height:1.5}
 
-    @keyframes slideUp {
-        0% {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+/* SKILLS GRID */
+.skills-sec{padding:120px 0;border-top:1px solid #1d1d1f}
+.skills-sec .s-header{margin-bottom:60px}
+.skills-sec .s-header h2{
+  font-size:clamp(36px,5vw,60px);font-weight:700;
+  letter-spacing:-.03em;margin-bottom:10px;
+}
+.skills-sec .s-header p{font-size:18px;color:#636366;max-width:500px}
+.s-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1d1d1f;border-radius:16px;overflow:hidden}
+.sc{background:#111;padding:32px;transition:all .4s}
+.sc:hover{background:#1a1a1a;transform:scale(1.02);z-index:2}
+.sc h3{font-size:16px;font-weight:600;margin-bottom:4px}
+.sc p{font-size:13px;color:#636366;line-height:1.5}
 
-    .hero h1 {
-        font-size: clamp(3rem, 8vw, 6rem);
-        font-weight: 700;
-        letter-spacing: -0.03em;
-        margin-bottom: 1rem;
-    }
+/* CONTACT */
+.cta-sec{
+  padding:120px 0;text-align:center;border-top:1px solid #1d1d1f;
+  background:radial-gradient(ellipse at 50% 80%, rgba(20,184,166,.04), transparent 60%);
+}
+.cta-sec h2{
+  font-size:clamp(36px,5vw,60px);font-weight:700;
+  letter-spacing:-.03em;margin-bottom:16px;
+}
+.cta-sec p{font-size:18px;color:#636366;margin-bottom:40px}
+.cta-links{display:flex;justify-content:center;flex-wrap:wrap;gap:14px}
+.cta-link{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 24px;border:1px solid #333;border-radius:980px;
+  color:#f5f5f7;text-decoration:none;font-size:14px;font-weight:500;
+  transition:all .3s;
+}
+.cta-link:hover{background:#14b8a6;color:#000;border-color:#14b8a6;transform:scale(1.04)}
 
-    .hero h2 {
-        font-size: clamp(1.5rem, 4vw, 2.5rem);
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 1.5rem;
-        letter-spacing: -0.02em;
-    }
+/* FOOTER */
+footer{padding:40px 0;font-size:12px;color:#636366;border-top:1px solid #1d1d1f}
+footer .w{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
 
-    .hero p {
-        font-size: 1.25rem;
-        color: var(--gray);
-        max-width: 600px;
-        margin-bottom: 2.5rem;
-    }
+/* Reveal */
+.r{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.r.go{opacity:1;transform:none}
+.r1{transition-delay:.1s}.r2{transition-delay:.2s}.r3{transition-delay:.3s}
 
-    .btn-group {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 3rem;
-    }
-
-    .btn {
-        padding: 0.8rem 1.8rem;
-        border-radius: 980px;
-        font-size: 1rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.3s var(--ease);
-        display: inline-block;
-    }
-
-    .btn-primary {
-        background-color: var(--accent);
-        color: #000;
-    }
-
-    .btn-primary:hover {
-        background-color: #0d9488;
-        transform: scale(1.02);
-    }
-
-    .btn-secondary {
-        background-color: transparent;
-        color: var(--text);
-        border: 1px solid #333;
-    }
-
-    .btn-secondary:hover {
-        background-color: #1c1c1e;
-        border-color: var(--text);
-    }
-
-    .stats {
-        display: flex;
-        gap: 3rem;
-    }
-
-    .stat-item h3 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--text);
-    }
-
-    .stat-item p {
-        font-size: 0.9rem;
-        color: var(--gray);
-        margin: 0;
-    }
-
-    /* STICKY SECTIONS */
-    .sticky-section {
-        padding: 8rem 0;
-        border-top: 1px solid #1c1c1e;
-    }
-
-    .sticky-container {
-        display: flex;
-        gap: 4rem;
-    }
-
-    .sticky-left {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        flex: 0 0 35%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .sticky-left h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 700;
-        letter-spacing: -0.03em;
-    }
-
-    .sticky-right {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 6rem;
-        padding: 10rem 0;
-    }
-
-    .content-block {
-        opacity: 0;
-        transform: translateY(40px);
-        transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
-    }
-
-    .content-block.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .content-block h3 {
-        font-size: 1.8rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--accent);
-    }
-
-    .content-block p {
-        font-size: 1.1rem;
-        color: var(--gray);
-    }
-
-    /* PROJECT CARDS */
-    .project-card {
-        background-color: var(--card-bg);
-        border-radius: 20px;
-        padding: 2.5rem;
-        border: 1px solid #2c2c2e;
-        transition: border-color 0.3s var(--ease);
-    }
-
-    .project-card:hover {
-        border-color: var(--accent);
-    }
-
-    .project-card h3 {
-        font-size: 2rem;
-        color: var(--text);
-        margin-bottom: 0.5rem;
-    }
-
-    .project-card .tag {
-        display: inline-block;
-        font-size: 0.8rem;
-        color: var(--accent);
-        background: rgba(20, 184, 166, 0.1);
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        margin-bottom: 1.5rem;
-    }
-
-    .project-card p {
-        color: var(--gray);
-    }
-
-    /* SKILLS */
-    .skills-section {
-        padding: 8rem 0;
-        border-top: 1px solid #1c1c1e;
-    }
-
-    .skills-header {
-        margin-bottom: 4rem;
-        max-width: 700px;
-    }
-
-    .skills-header h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 700;
-        letter-spacing: -0.03em;
-        margin-bottom: 1rem;
-    }
-
-    .skills-header p {
-        font-size: 1.2rem;
-        color: var(--gray);
-    }
-
-    .skills-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-    }
-
-    .skill-card {
-        background-color: var(--card-bg);
-        padding: 2rem;
-        border-radius: 16px;
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
-        border: 1px solid transparent;
-    }
-
-    .skill-card.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    .skill-card:hover {
-        border-color: var(--accent);
-    }
-
-    .skill-card h3 {
-        font-size: 1.4rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .skill-card p {
-        color: var(--gray);
-        font-size: 0.95rem;
-    }
-
-    /* CONTACT */
-    .contact-section {
-        padding: 8rem 0 12rem;
-        border-top: 1px solid #1c1c1e;
-        text-align: center;
-    }
-
-    .contact-section h2 {
-        font-size: clamp(3rem, 7vw, 5rem);
-        font-weight: 700;
-        letter-spacing: -0.03em;
-        margin-bottom: 1.5rem;
-    }
-
-    .contact-section > .container > p {
-        font-size: 1.2rem;
-        color: var(--gray);
-        margin-bottom: 3rem;
-    }
-
-    .contact-links {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 1.5rem;
-    }
-
-    .contact-link {
-        color: var(--text);
-        text-decoration: none;
-        padding: 1rem 2rem;
-        border: 1px solid #333;
-        border-radius: 980px;
-        transition: all 0.3s var(--ease);
-        font-weight: 500;
-    }
-
-    .contact-link:hover {
-        background-color: var(--accent);
-        color: #000;
-        border-color: var(--accent);
-    }
-
-    @media (max-width: 768px) {
-        .sticky-container {
-            flex-direction: column;
-            gap: 2rem;
-        }
-        .sticky-left {
-            position: static;
-            height: auto;
-            flex: 1 1 100%;
-        }
-        .sticky-right {
-            padding: 0;
-            gap: 3rem;
-        }
-        .skills-grid {
-            grid-template-columns: 1fr;
-        }
-        .stats {
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-    }
+@media(max-width:768px){
+  .hero-stats{flex-direction:column;gap:20px}
+  .s-grid{grid-template-columns:1fr}
+  .zc-inner,.zc-project{margin-left:0}
+  .zoom-title{font-size:32px}
+  .hs .v{font-size:24px}
+  .hero h1{font-size:48px}
+}
 </style>
 </head>
 <body>
 
-    <!-- HERO -->
-    <header class="hero container">
-        <h1>Pierluigi Rizzu</h1>
-        <h2>AI Agent Architect</h2>
-        <p>Architetto sistemi multi-agente con memoria persistente, tool calling e LLM in produzione. Non prompt engineering: orchestrazione.</p>
-        <div class="btn-group">
-            <a href="#work" class="btn btn-primary">Vedi Progetti</a>
-            <a href="#contact" class="btn btn-secondary">Contattami</a>
-        </div>
-        <div class="stats">
-            <div class="stat-item">
-                <h3>50+</h3>
-                <p>Agenti Distribuiti</p>
-            </div>
-            <div class="stat-item">
-                <h3>99.9%</h3>
-                <p>Uptime Sistema</p>
-            </div>
-            <div class="stat-item">
-                <h3>10M+</h3>
-                <p>Task Elaborati</p>
-            </div>
-        </div>
-    </header>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="w">
+    <div class="eyebrow">Hermes Agent · Cagliari</div>
+    <h1>Architetto di<br><span class="grad">agenti autonomi.</span></h1>
+    <p>Progetto e costruisco sistemi multi-agente in produzione. Tool calling, memoria persistente, orchestrazione LLM. Ogni agente è una decisione architetturale.</p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-pri">Vedi i progetti →</a>
+      <a href="#contact" class="btn-sec">Contattami</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="v">50+</div><div class="l">Agenti in produzione</div></div>
+      <div class="hs"><div class="v">99.9%</div><div class="l">Uptime sistema</div></div>
+      <div class="hs"><div class="v">10M+</div><div class="l">Task elaborati</div></div>
+    </div>
+  </div>
+</section>
 
-    <!-- ABOUT -->
-    <section id="about" class="sticky-section">
-        <div class="container sticky-container">
-            <div class="sticky-left">
-                <h2>Chi sono</h2>
-            </div>
-            <div class="sticky-right">
-                <div class="content-block">
-                    <h3>Approccio</h3>
-                    <p>Un agente non è un modello. È il sistema che lo circonda. Architettura prima del prompt.</p>
-                </div>
-                <div class="content-block">
-                    <h3>Stack</h3>
-                    <p>Python, TypeScript, LangGraph, pgvector, K8s. Multi-agente, eval pipeline, guardrail deterministici.</p>
-                </div>
-                <div class="content-block">
-                    <h3>Filosofia</h3>
-                    <p>Prompt è il 5%. Il resto è architettura: recupero contesto, delega, verifica output, recovery errori.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ABOUT — Sticky Zoom -->
+<section id="about" class="zoom-section">
+  <div class="zoom-sticky">
+    <div class="bg-glow"></div>
+    <div class="w">
+      <div class="zoom-label">Chi sono</div>
+      <h2 class="zoom-title">Sistemi che<br>decidono, non<br>che rispondono.</h2>
+      <p class="zoom-sub">Lavoro all'intersezione tra infrastruttura, modelli e orchestrazione. Il mio focus sono agenti affidabili in produzione.</p>
+    </div>
+  </div>
+  <div class="zoom-content w">
+    <div class="zc-block"><div class="zc-inner r"><h3><span class="num">01</span>Approccio</h3><p>Un agente non è un modello. È il sistema che lo circonda: routing, memoria, validazione, retry policy. Progetto l'architettura prima del prompt.</p></div></div>
+    <div class="zc-block"><div class="zc-inner r r1"><h3><span class="num">02</span>Stack</h3><p>Python, TypeScript, LangGraph, pgvector, K8s. Multi-agente, eval pipeline, guardrail deterministici. Ogni strumento ha un perché.</p></div></div>
+    <div class="zc-block"><div class="zc-inner r r2"><h3><span class="num">03</span>Filosofia</h3><p>Il prompt è il 5%. Il resto è architettura: recupero contesto, delega, verifica output, recovery errori. Qui si vince o si perde.</p></div></div>
+  </div>
+</section>
 
-    <!-- WORK -->
-    <section id="work" class="sticky-section">
-        <div class="container sticky-container">
-            <div class="sticky-left">
-                <h2>Progetti</h2>
-            </div>
-            <div class="sticky-right">
-                <div class="content-block project-card">
-                    <span class="tag">Autonomia</span>
-                    <h3>Hermes Scout</h3>
-                    <p>Sistema multi-agente per ricerca mercato autonoma. 4 agenti specializzati orchestrati con supervisor.</p>
-                </div>
-                <div class="content-block project-card">
-                    <span class="tag">Persistenza</span>
-                    <h3>Atlas Memory</h3>
-                    <p>Layer memoria persistente per agenti long-running. Episodica, semantica, procedurale. Recupero ibrido keyword+vettoriale.</p>
-                </div>
-                <div class="content-block project-card">
-                    <span class="tag">Sicurezza</span>
-                    <h3>Sentinel</h3>
-                    <p>Policy engine dichiarativo per validare output agenti prima dell'esecuzione. Regole YAML, pipeline, approvazione umana.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- WORK — Sticky Zoom -->
+<section id="work" class="zoom-section">
+  <div class="zoom-sticky">
+    <div class="bg-glow"></div>
+    <div class="w">
+      <div class="zoom-label">Progetti</div>
+      <h2 class="zoom-title">Tre sistemi in<br>produzione, non<br>prototipi.</h2>
+    </div>
+  </div>
+  <div class="zoom-content w">
+    <div class="zc-projects">
+      <div class="zc-project r"><span class="tag">Multi-agente</span><h3>Hermes Scout</h3><p>Sistema multi-agente per ricerca mercato autonoma. 4 agenti specializzati orchestrati con supervisor, memoria condivisa su pgvector, tracing OpenTelemetry.</p></div>
+      <div class="zc-project r r1"><span class="tag">Memoria persistente</span><h3>Atlas Memory</h3><p>Layer di memoria per agenti long-running. Distinzione tra memoria episodica, semantica e procedurale. Recupero ibrido keyword + vettoriale con auto-consolidamento.</p></div>
+      <div class="zc-project r r2"><span class="tag">Guardrails</span><h3>Sentinel</h3><p>Policy engine dichiarativo per validare output agenti prima dell'esecuzione dei tool. Regole YAML, valutazione in pipeline, approvazione umana opzionale.</p></div>
+    </div>
+  </div>
+</section>
 
-    <!-- SKILLS -->
-    <section id="skills" class="skills-section">
-        <div class="container">
-            <div class="skills-header">
-                <h2>Competenze</h2>
-                <p>Lo stack che uso ogni giorno, non quello sul CV.</p>
-            </div>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <h3>Architettura LLM</h3>
-                    <p>Progettazione di pipeline avanzate per l'integrazione di modelli linguistici di grandi dimensioni.</p>
-                </div>
-                <div class="skill-card">
-                    <h3>Orchestrazione Agenti</h3>
-                    <p>Sviluppo di sistemi multi-agente capaci di collaborare e risolvere task complessi in autonomia.</p>
-                </div>
-                <div class="skill-card">
-                    <h3>Vector Databases</h3>
-                    <p>Gestione della memoria a lungo termine tramite embeddings e database vettoriali ottimizzati.</p>
-                </div>
-                <div class="skill-card">
-                    <h3>API & Integrazioni</h3>
-                    <p>Collegamento fluido tra agenti AI e servizi esterni tramite architetture REST e GraphQL.</p>
-                </div>
-                <div class="skill-card">
-                    <h3>Prompt Engineering</h3>
-                    <p>Ottimizzazione delle interazioni con i modelli per garantire risposte precise e contestualizzate.</p>
-                </div>
-                <div class="skill-card">
-                    <h3>Cloud & DevOps</h3>
-                    <p>Deploy scalabile e monitoraggio continuo di infrastrutture AI su ambienti cloud nativi.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- SKILLS -->
+<section class="skills-sec" id="skills">
+  <div class="w">
+    <div class="s-header r"><h2>Competenze</h2><p>Lo stack che uso ogni giorno, non quello sul CV.</p></div>
+    <div class="s-grid r r1">
+      <div class="sc"><h3>Orchestrazione agenti</h3><p>Sistemi multi-agente con routing semantico, supervisor, fallback e recovery automatico.</p></div>
+      <div class="sc"><h3>Tool calling</h3><p>Function calling strutturato, schema validation, sandboxing, caching e retry policy.</p></div>
+      <div class="sc"><h3>Memoria & RAG</h3><p>Embedding, reranking, query expansion, memoria conversazionale e knowledge graphs.</p></div>
+      <div class="sc"><h3>Guardrails</h3><p>Input/output validation, PII detection, prompt injection, bias mitigation, audit trail.</p></div>
+      <div class="sc"><h3>Infrastruttura</h3><p>Deploy K8s, auto-scaling, cost optimization, multi-region failover, osservabilità.</p></div>
+      <div class="sc"><h3>Linguaggi</h3><p>Python, TypeScript, Rust. Scelti in base a performance, safety e velocity del team.</p></div>
+    </div>
+  </div>
+</section>
 
-    <!-- CONTACT -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2>Contatti</h2>
-            <p>Parliamo di agenti che funzionano davvero.</p>
-            <div class="contact-links">
-                <a href="mailto:pierluigirizzu@agentmail.to" class="contact-link">Email</a>
-                <a href="https://github.com/RizzuAI" target="_blank" class="contact-link">GitHub</a>
-                <a href="https://x.com/RizzuAI" target="_blank" class="contact-link">X (Twitter)</a>
-                <a href="https://linkedin.com/in/RizzuAI" target="_blank" class="contact-link">LinkedIn</a>
-            </div>
-        </div>
-    </section>
+<!-- CONTACT -->
+<section class="cta-sec" id="contact">
+  <div class="w">
+    <h2 class="r">Parliamo di agenti<br>che funzionano davvero.</h2>
+    <p class="r r1">Hai un problema che non si risolve con una singola chiamata LLM?</p>
+    <div class="cta-links r r2">
+      <a href="mailto:pierluigirizzu@agentmail.to" class="cta-link">✉︎ Email</a>
+      <a href="https://github.com/RizzuAI" target="_blank" class="cta-link">⚙︎ GitHub</a>
+      <a href="https://x.com/RizzuAI" target="_blank" class="cta-link">𝕏 X</a>
+      <a href="https://linkedin.com/in/RizzuAI" target="_blank" class="cta-link">💼 LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="w">
+    <div>© 2026 Pierluigi Rizzu</div>
+    <div>AI Agent Architect @ Hermes Agent · Cagliari, Italia</div>
+  </div>
+</footer>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const observerOptions = {
-            threshold: 0.15,
-            rootMargin: "0px 0px -50px 0px"
-        };
+document.addEventListener('DOMContentLoaded',()=>{
+  // Scroll reveal
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('go');io.unobserve(e.target)}});
+  },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.r').forEach(el=>io.observe(el));
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        // Observer for sticky content blocks
-        document.querySelectorAll('.content-block').forEach(block => {
-            observer.observe(block);
-        });
-
-        // Observer for skills with stagger effect
-        const skillCards = document.querySelectorAll('.skill-card');
-        const skillObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Calculate delay based on index within the current visible group
-                    const visibleIndex = Array.from(skillCards).indexOf(entry.target);
-                    const delay = (visibleIndex % 3) * 100; // Stagger by 100ms
-                    entry.target.style.transitionDelay = `${delay}ms`;
-                    entry.target.classList.add('visible');
-                    skillObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        skillCards.forEach(card => {
-            skillObserver.observe(card);
-        });
+  // Zoom sections: glow follows scroll
+  const zStickies=document.querySelectorAll('.zoom-sticky');
+  const glowFn=()=>{
+    zStickies.forEach(s=>{
+      const rect=s.getBoundingClientRect();
+      const progress=Math.max(0,Math.min(1,(window.innerHeight-rect.top)/window.innerHeight));
+      const glow=s.querySelector('.bg-glow');
+      if(glow)glow.style.opacity=progress*.8;
     });
+  };
+  window.addEventListener('scroll',glowFn,{passive:true});
+  glowFn();
+});
 </script>
-
 </body>
 </html>
